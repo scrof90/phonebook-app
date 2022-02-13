@@ -1,5 +1,5 @@
-GET http://localhost:3001/api/persons/2
+GET http://localhost:3001/api/people/2
 
 ###
 
-GET http://localhost:3001/api/persons/5
+GET http://localhost:3001/api/people/5

@@ -1,11 +1,9 @@
 const express = require('express');
+const app = express();
 const cors = require('cors');
 const morgan = require('morgan');
-const app = express();
-
-app.use(express.static('build'));
-app.use(cors());
-app.use(express.json());
+require('dotenv').config();
+const Person = require('./models/person');
 
 // logger
 
@@ -28,7 +26,10 @@ const logger = morgan((tokens, req, res) => {
   ].join(' ');
 });
 
+app.use(express.json());
 app.use(logger);
+app.use(cors());
+app.use(express.static('build'));
 
 // data
 

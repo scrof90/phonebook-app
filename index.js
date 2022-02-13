@@ -33,7 +33,7 @@ app.use(express.static('build'));
 
 // data
 
-let persons = [
+let people = [
   {
     id: 1,
     name: 'Arto Hellas',
@@ -64,17 +64,17 @@ app.get('/', (req, res) => {
   Routes
   */
 
-// /api/persons
+// /api/people
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/people', (request, response) => {
   Person.find({}).then((people) => {
     response.json(people);
   });
 });
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/people/:id', (request, response) => {
   const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
+  const person = people.find((person) => person.id === id);
   if (person) {
     response.json(person);
   } else {
@@ -84,14 +84,14 @@ app.get('/api/persons/:id', (request, response) => {
 
 const generateId = () => Math.floor(Math.random() * 1000000);
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/people', (request, response) => {
   const body = request.body;
 
   if (!body.name) {
     return response.status(400).json({
       error: 'name missing',
     });
-  } else if (persons.find((p) => p.name === body.name)) {
+  } else if (people.find((p) => p.name === body.name)) {
     return response.status(400).json({
       error: 'name must be unique',
     });
@@ -107,14 +107,14 @@ app.post('/api/persons', (request, response) => {
     id: generateId(),
   };
 
-  persons = persons.concat(person);
+  people = people.concat(person);
 
   response.json(person);
 });
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/people/:id', (request, response) => {
   const id = Number(request.params.id);
-  persons = persons.filter((p) => p.id !== id);
+  people = people.filter((p) => p.id !== id);
 
   response.status(204).end();
 });
@@ -123,7 +123,7 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.get('/info', (request, response) => {
   const info = `<p>Phonebook has info for ${
-    persons.length
+    people.length
   } people</p>\n${new Date()}`;
   response.send(info);
 });

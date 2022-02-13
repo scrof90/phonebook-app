@@ -4,4 +4,4 @@
 
 [App on Heroku](https://serene-falls-56324.herokuapp.com/)
 
-Time taken: 0:30
+Time taken: 0:50

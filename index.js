@@ -67,7 +67,9 @@ app.get('/', (req, res) => {
 // /api/persons
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons);
+  Person.find({}).then((people) => {
+    response.json(people);
+  });
 });
 
 app.get('/api/persons/:id', (request, response) => {

@@ -13,7 +13,7 @@ morgan.token('body', (req, res) => {
   }
 });
 
-const logger = morgan((tokens, req, res) => {
+const requestLogger = morgan((tokens, req, res) => {
   return [
     tokens.method(req, res),
     tokens.url(req, res),
@@ -26,14 +26,10 @@ const logger = morgan((tokens, req, res) => {
   ].join(' ');
 });
 
-app.use(express.json());
-app.use(logger);
-app.use(cors());
 app.use(express.static('build'));
-
-app.get('/', (req, res) => {
-  res.send('<h1>Hello World!</h1>');
-});
+app.use(express.json());
+app.use(requestLogger);
+app.use(cors());
 
 /*
   Routes
@@ -47,14 +43,16 @@ app.get('/api/people', (request, response) => {
   });
 });
 
-app.get('/api/people/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const person = people.find((person) => person.id === id);
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+app.get('/api/people/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((person) => {
+      if (person) {
+        response.json(person);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.post('/api/people', (request, response) => {
@@ -77,11 +75,12 @@ app.post('/api/people', (request, response) => {
   });
 });
 
-app.delete('/api/people/:id', (request, response) => {
-  const id = Number(request.params.id);
-  people = people.filter((p) => p.id !== id);
-
-  response.status(204).end();
+app.delete('/api/people/:id', (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 // /info
@@ -100,6 +99,20 @@ const unknownEndpoint = (request, response) => {
 };
 
 app.use(unknownEndpoint);
+
+// error handling middleware
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 // port
 

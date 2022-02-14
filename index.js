@@ -86,10 +86,10 @@ app.delete('/api/people/:id', (request, response, next) => {
 // /info
 
 app.get('/info', (request, response) => {
-  const info = `<p>Phonebook has info for ${
-    people.length
-  } people</p>\n${new Date()}`;
-  response.send(info);
+  Person.count({}).then((count) => {
+    const info = `<p>Phonebook has info for ${count} people</p>\n${new Date()}`;
+    response.send(info);
+  });
 });
 
 // unknown endpoint

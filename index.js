@@ -58,12 +58,6 @@ app.get('/api/people/:id', (request, response, next) => {
 app.post('/api/people', (request, response, next) => {
   const body = request.body;
 
-  if (body.name === undefined) {
-    return response.status(400).json({ error: 'name missing' });
-  } else if (body.number === undefined) {
-    return response.status(400).json({ error: 'number missing' });
-  }
-
   const person = new Person({
     name: body.name,
     number: body.number,
